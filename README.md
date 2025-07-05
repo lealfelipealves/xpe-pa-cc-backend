@@ -4,7 +4,7 @@
 - NestJS
 - Prisma ORM
 - Docker e Docker Compose
-- PostgreSQL
+- MySQL
 - Swagger (Documentação de APIs)
 - Clean Code
 - Clean Architecture

@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://postgres:docker@fastfood-db:5432/fastfood?schema=public
+      - DB_URL=mysql://root:docker@fastfood-db:3306/fastfood
     ports:
       - ${APP_PORT}:${APP_PORT}
     depends_on:
@@ -20,21 +20,22 @@ services:
   db:
     container_name: fastfood-db
     restart: always
-    image: postgres
+    image: mysql:8.4
     env_file:
       - .env
     ports:
-      - ${POSTGRES_PORT}:5432
+      - ${DB_PORT}:3306
     environment:
-      - PGDATA=/data/postgres
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
     volumes:
-      - pgdata:/data/postgres
+      - mysqldata:/var/lib/mysql
     networks:
       fastfood-network:
         ipv4_address: 172.30.0.20
 
 volumes:
-  pgdata:
+  mysqldata:
 
 networks:
   fastfood-network:
