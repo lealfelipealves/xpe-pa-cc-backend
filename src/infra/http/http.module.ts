@@ -24,9 +24,11 @@ import { GetOrderPaymentStatusController } from './controllers/get-order-payment
 import { CheckoutOrderUseCase } from '@/domain/fastfood/application/use-cases/checkout-order'
 import { UpdateOrderStatusUseCase } from '@/domain/fastfood/application/use-cases/update-order-status'
 import { UpdatePaymentStatusUseCase } from '@/domain/fastfood/application/use-cases/update-payment-status'
+import { HealthController } from './controllers/health.controller'
 @Module({
   imports: [DatabaseModule],
   controllers: [
+    HealthController,
     GetCustomerByCpfController,
     CreateCustomerController,
     GetProductByCategoryController,
