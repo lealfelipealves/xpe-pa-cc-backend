@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# k8s
+k8s/kubeconfig.yaml
+k8s/backup
+
 # Logs
 logs
 *.log

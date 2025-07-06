@@ -1,0 +1,68 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Image"]
+    types:
+      - completed
+    branches: [ main ]
+
+env:
+  REGISTRY: ${{ vars.REGISTRY }}
+  REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
+  APP_PORT: ${{ secrets.APP_PORT }}
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_DATABASE: ${{ secrets.DB_DATABASE }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+  DOCKER_CONFIG_JSON: ${{ secrets.DOCKER_CONFIG_JSON }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Configure kubectl
+      run: |
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
+        export KUBECONFIG=kubeconfig
+
+    - name: Generate version
+      id: version
+      run: |
+        echo "version=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+    - name: Update deployment image
+      run: |
+        export KUBECONFIG=kubeconfig
+        kubectl set image deployment/backend-deployment \
+          backend=${{ env.REGISTRY_V2 }}:${{ steps.version.outputs.version }} \
+          -n xpe
+
+    - name: Apply Kubernetes manifests
+      run: |
+        export KUBECONFIG=kubeconfig
+        # Substituir variáveis nos secrets
+        envsubst < k8s/production/secrets/secret.yml | kubectl apply -f -
+        envsubst < k8s/production/secrets/cr-image-pull-credentials.yml | kubectl apply -f -
+        kubectl apply -k k8s/production/
+
+    - name: Wait for deployment rollout
+      run: |
+        export KUBECONFIG=kubeconfig
+        kubectl rollout status deployment/backend-deployment -n xpe --timeout=300s
+
+    - name: Verify deployment
+      run: |
+        export KUBECONFIG=kubeconfig
+        kubectl get pods -n xpe -l app=backend
+        kubectl get services -n xpe 
