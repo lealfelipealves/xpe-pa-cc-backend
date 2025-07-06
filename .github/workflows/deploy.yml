@@ -7,20 +7,19 @@ on:
       - completed
     branches: [ main ]
 
-env:
-  REGISTRY: ${{ vars.REGISTRY }}
-  REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
-  APP_PORT: ${{ secrets.APP_PORT }}
-  DB_URL: ${{ secrets.DB_URL }}
-  DB_DATABASE: ${{ secrets.DB_DATABASE }}
-  DB_PORT: ${{ secrets.DB_PORT }}
-  DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-  DOCKER_CONFIG_JSON: ${{ secrets.DOCKER_CONFIG_JSON }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      REGISTRY: ${{ vars.REGISTRY }}
+      REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
+      APP_PORT: ${{ secrets.APP_PORT }}
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+      DOCKER_CONFIG_JSON: ${{ secrets.DOCKER_CONFIG_JSON }}
     
     steps:
     - name: Checkout code
