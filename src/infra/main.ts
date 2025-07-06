@@ -8,6 +8,13 @@ async function bootstrap() {
     // logger: false,
   })
 
+  // Configuração CORS para liberar todas as origens
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: false,
+  })
+
   const configService = app.get(EnvService)
   const port = configService.get('APP_PORT')
 
