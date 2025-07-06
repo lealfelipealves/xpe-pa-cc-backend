@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
     
     steps:
     - name: Checkout code
@@ -41,10 +43,10 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ vars.REGISTRY_V2 }}:${{ steps.version.outputs.version }}
-          ${{ vars.REGISTRY_V2 }}:latest
+          ${{ env.REGISTRY_V2 }}:${{ steps.version.outputs.version }}
+          ${{ env.REGISTRY_V2 }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Output image tag
-      run: echo "Built image: ${{ vars.REGISTRY_V2 }}:${{ steps.version.outputs.version }}" 
+      run: echo "Built image: $REGISTRY_V2:${{ steps.version.outputs.version }}" 
