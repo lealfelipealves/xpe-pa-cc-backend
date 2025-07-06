@@ -6,6 +6,12 @@ on:
     types:
       - completed
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (optional)'
+        required: false
+        type: string
 
 jobs:
   deploy:
@@ -38,7 +44,11 @@ jobs:
     - name: Generate version
       id: version
       run: |
-        echo "version=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        fi
 
     - name: Update deployment image
       run: |
