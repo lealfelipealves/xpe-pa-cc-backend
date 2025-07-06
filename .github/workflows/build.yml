@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  REGISTRY: ${{ vars.REGISTRY_V2 }}
+  REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
   IMAGE_NAME: ${{ vars.IMAGE_NAME }}
 
 jobs:
