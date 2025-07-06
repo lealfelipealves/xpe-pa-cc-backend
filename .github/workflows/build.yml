@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  REGISTRY_V2: ${{ vars.REGISTRY_V2 }}
-  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,10 +41,10 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ env.REGISTRY_V2 }}:${{ steps.version.outputs.version }}
-          ${{ env.REGISTRY_V2 }}:latest
+          ${{ vars.REGISTRY_V2 }}:${{ steps.version.outputs.version }}
+          ${{ vars.REGISTRY_V2 }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Output image tag
-      run: echo "Built image: ${{ env.REGISTRY_V2 }}:${{ steps.version.outputs.version }}" 
+      run: echo "Built image: ${{ vars.REGISTRY_V2 }}:${{ steps.version.outputs.version }}" 
