@@ -28,8 +28,36 @@ export class GetCustomerByCpfUseCase {
       return left(new ResourceNotFoundError())
     }
 
+    let auth = null
+
+    try {
+      const response = await fetch(
+        'https://ogrof4g0fi.execute-api.us-east-1.amazonaws.com/auth',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            cpf: cpf
+          })
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to auth customer')
+      }
+
+      auth = await response.json()
+
+      console.log('GetCustomerByCpfUseCase', auth)
+    } catch (error) {
+      console.error('GetCustomerByCpfUseCase', error)
+    }
+
     return right({
-      customer
+      customer,
+      auth
     })
   }
 }

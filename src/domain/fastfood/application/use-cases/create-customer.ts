@@ -35,6 +35,31 @@ export class CreateCustomerUseCase {
       email: emailValueObject
     })
 
+    try {
+      const response = await fetch(
+        'https://ogrof4g0fi.execute-api.us-east-1.amazonaws.com/create',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            cpf: cpf
+          })
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to create customer')
+      }
+
+      const data = await response.json()
+
+      console.log('CreateCustomerUseCase', data)
+    } catch (error) {
+      console.error('CreateCustomerUseCase', error)
+    }
+
     await this.customerRepository.create(customer)
 
     return right({
