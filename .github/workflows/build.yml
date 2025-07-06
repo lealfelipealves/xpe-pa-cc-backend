@@ -49,4 +49,5 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Output image tag
-      run: echo "Built image: $REGISTRY_V2:${{ steps.version.outputs.version }}" 
+      run: |
+        echo "Built image: ${REGISTRY_V2}:${{ steps.version.outputs.version }}"
